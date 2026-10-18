@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#07111e" />
+  <meta name="description" content="AquaPhi: an original interactive sandbox for aqueous-compartment-inspired temporal computing and topology comparisons." />
+  <title>AquaPhi | The Wetware Observatory</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{--bg:#07111d;--panel:#0b1a28;--panel2:#0c1e2d;--border:#244052;--muted:#8ca6b5;--pale:#eafaff;--cyan:#77efe3;--mint:#a5efc8;--violet:#ba9cff;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;--display:'Space Grotesk',sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#07111d;color:var(--pale);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}button,select,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,.droplet:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}a{color:inherit;text-decoration:none}
+.ambient{pointer-events:none;position:absolute;z-index:-1;border-radius:50%;filter:blur(120px)}.ambient-a{width:500px;height:500px;top:95px;left:-220px;background:#025f71;opacity:.22}.ambient-b{width:430px;height:430px;top:550px;right:-160px;background:#2b275b;opacity:.21}body{overflow-x:hidden}.shell{max-width:1430px;margin:auto;padding:0 42px}.topbar{height:94px;display:flex;align-items:center;gap:60px;border-bottom:1px solid #223747}.brand{display:flex;align-items:center;gap:13px;white-space:nowrap}.logo{display:grid;place-items:center;color:#78e8d8;border:1px solid #3d9096;border-radius:50%;height:40px;width:40px;box-shadow:0 0 32px #2ceaca25; font-size:29px;line-height:1}.brand strong{font-family:var(--display);font-size:16px;letter-spacing:.12em}.brand small{display:block;font:9px var(--mono);color:#73a3b3;letter-spacing:.24em;margin-top:1px}.toplinks{display:flex;gap:30px;margin-left:auto}.toplinks a{font:10px var(--mono);letter-spacing:.1em;color:#b3c5cb}.toplinks a:hover{color:var(--cyan)}.badge{border:1px solid #275b60;padding:9px 13px;border-radius:4px;font:9px var(--mono);letter-spacing:.06em;white-space:nowrap}.badge-green{color:#9becd4;background:#092e36}.blink,.live-dot{display:inline-block;background:#73efd4;border-radius:50%;height:6px;width:6px;box-shadow:0 0 12px #73efd4;margin-right:8px;vertical-align:middle;animation:breathe 1.4s ease-in-out infinite alternate}@keyframes breathe{to{opacity:.28}}
+.intro{padding:62px 0 33px}.overline,.eyebrow,.intro-index{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:#7ee6da}.tiny-rule{display:inline-block;width:22px;height:1px;background:var(--cyan);vertical-align:middle;margin-right:10px}.intro-index{color:#7293a1;margin-left:20px}.intro h1{font-family:var(--display);font-size:clamp(38px,5.1vw,70px);line-height:1.09;letter-spacing:-.045em;font-weight:600;margin:16px 0 13px}.intro h1 em{font-weight:400;font-style:normal;color:var(--cyan)}.intro>p{max-width:760px;color:#a8c0cc;font-size:15px;line-height:1.8;margin:0}.science-note{display:flex;gap:10px;align-items:flex-start;max-width:780px;color:#a0b8c3;font-size:11px;margin-top:22px}.science-note strong{color:#cce3e8}.note-icon,.tiny-circle{display:inline-grid;place-items:center;flex:0 0 auto;border:1px solid #51778a;height:16px;width:16px;border-radius:50%;font:10px var(--mono);color:#addbe0}
+.workspace{display:grid;grid-template-columns:minmax(0,1.76fr) minmax(310px,.85fr);gap:18px;align-items:stretch}.panel{background:linear-gradient(138deg,#0d1e2c 0%,#0a1724 100%);border:1px solid #264053;border-radius:8px;box-shadow:0 14px 55px #00000024}.panel-head{height:86px;padding:23px 27px 15px;display:flex;justify-content:space-between;align-items:center;gap:10px}.panel h2,.methodology h2{font:600 23px/1.2 var(--display);letter-spacing:-.03em;margin:5px 0 0}.chip{font:9px var(--mono);letter-spacing:.08em;color:var(--cyan);border:1px solid #24666d;background:#10303a;padding:8px 12px;border-radius:2px;white-space:nowrap}.stage{position:relative;margin:1px 18px 0;background:radial-gradient(ellipse at 50% 52%,#123248 0%,#0b2334 42%,#091a28 75%);border:1px solid #234457;border-radius:5px;overflow:hidden}.stage svg{width:100%;display:block;aspect-ratio:720/490;min-height:295px;max-height:482px}.stage-plate{position:absolute;font:9px var(--mono);color:#91bed0;letter-spacing:.09em}.stage-plate-top{top:20px;left:22px}.stage-plate-bottom{bottom:20px;left:20px;color:#7199ad}.stage-plate-bottom span{color:#d8edea;margin-left:4px}.legend{position:absolute;bottom:20px;right:18px;display:flex;gap:16px;font:8px var(--mono);color:#82a1b0}.legend i,.trace-legend i{display:inline-block;width:7px;height:7px;border-radius:50%;vertical-align:middle;margin-right:5px}.legend .cyan{background:#70eae1}.legend .violet{background:#bc91f8}.membrane-base{stroke:#35586f;stroke-width:1.5;stroke-dasharray:4 7;opacity:.65}.membrane-glow{stroke:#b484ff;opacity:.24;filter:url(#lineGlow);stroke-linecap:round}.membrane-flow{stroke:#9ca0ff;opacity:.5;stroke-linecap:round}.drop-haze{fill:#5efce7;opacity:.2;filter:url(#softGlow)}.drop-shell{fill:url(#dropletGrad);stroke:#59bad7;stroke-width:1.3}.drop-shine{fill:#dffef7;opacity:.14}.droplet{cursor:pointer}.droplet:hover .drop-shell{stroke:#ecffff;stroke-width:2}.droplet.selected .drop-shell{fill:url(#dropletSelected);stroke:#dbfff6;stroke-width:2.4}.droplet.selected .drop-haze{opacity:.55}.droplet.is-source .drop-name{fill:#ffffff}.drop-name{font:600 15px var(--display);fill:#e4fcff;pointer-events:none}.drop-value{font:9px var(--mono);fill:#b7e0e6;pointer-events:none}
+.transport{padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #223c4d}.play-actions{display:flex;gap:8px;align-items:center}.btn{border:1px solid #3b7180;border-radius:4px;padding:11px 15px;background:#133445;color:#e7fbfc;font:700 10px var(--mono);letter-spacing:.05em;transition:background .2s,transform .2s}.btn:hover:not(:disabled){background:#1c5060;transform:translateY(-1px)}.btn:disabled{opacity:.4;cursor:not-allowed}.btn-primary{background:#83eadc;color:#06313b;border-color:#8bf8e7;min-width:96px}.btn-primary:hover:not(:disabled){background:#a9fff1}.btn-icon{min-width:39px;padding:11px;font-size:18px;line-height:.75}.transport-time{font:10px var(--mono);color:#7898a9;letter-spacing:.03em}.transport-time strong{color:#e8fbfa}.separator{margin:0 12px;color:#415d70}.reading-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:20px 22px 26px;gap:8px}.reading{border-right:1px solid #274355;padding-left:13px}.reading:first-child{padding-left:0}.reading:last-child{border:0}.reading>span{display:block;color:#7393a4;font:8px var(--mono);letter-spacing:.08em}.reading>strong{font:600 24px var(--display);display:block;margin-top:5px;white-space:nowrap}.reading>strong i{font:10px var(--mono);color:#80aab7;font-style:normal}.reading .small-unit{font:13px var(--mono);color:#7395a4}
+.controls-card{display:flex;flex-direction:column}.controls-card .panel-head{height:87px}.settings-glyph{color:#78a8bb;font-size:20px}.control-section{margin:0 25px;padding:20px 0 19px;border-top:1px solid #294353}.section-top{display:flex;justify-content:space-between;color:#8fb3c3;font:10px var(--mono);letter-spacing:.07em;margin-bottom:15px}.section-counter{color:#5d8394}.topology-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.topology-btn{display:flex;align-items:center;gap:9px;text-align:left;background:#102537;border:1px solid #2b4758;border-radius:4px;min-height:45px;padding:8px 10px;color:#a4c1cb;font:11px var(--display)}.topology-btn:hover{border-color:#659eab}.topology-btn.active{border-color:#7dd6ce;background:#143c44;color:#d5fff4;box-shadow:inset 0 0 0 1px #2a8e81}.topology-icon{font-size:18px;width:20px;text-align:center;color:#7cc8d4}.hint{color:#87a5b2;font-size:11px;margin:12px 0 0;min-height:18px}.field-label{display:block;font-size:11px;color:#bad1da;margin-bottom:8px}select{width:100%;background:#102739;color:#d4ebf4;border:1px solid #375568;padding:12px;border-radius:3px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#8db5c0 50%),linear-gradient(135deg,#8db5c0 50%,transparent 50%);background-position:calc(100% - 19px) 18px,calc(100% - 14px) 18px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}.slider-section label{display:flex;justify-content:space-between;font-size:11px;color:#b5d0db;margin:14px 0 6px}.slider-section output{font:10px var(--mono);color:#9df2df}.slider-section input{width:100%;height:5px;accent-color:#7ce6d5;margin:4px 0 5px;cursor:pointer}.control-footer{margin:8px 25px 22px;padding:12px 13px;background:#102c39;border:1px solid #27505c;display:flex;align-items:flex-start;gap:10px;border-radius:3px}.control-footer p{font-size:10px;line-height:1.65;color:#91b3c1;margin:0}
+.timeline{margin-top:18px;padding:22px 27px 16px}.timeline-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.timeline h2{font-size:19px}.trace-legend{display:flex;gap:23px;font:9px var(--mono);color:#87a7b6}.trace-legend .input{background:#7f97a8}.trace-legend .source{background:#6decdd}.trace-legend .selected{background:#c599ff}.timeline svg{display:block;width:100%;height:153px;margin-top:21px;background:#0b1d2b;border:1px solid #223d50}.chart-gridline{stroke:#2b4556;stroke-width:.65;opacity:.5;stroke-dasharray:3 4}.chart-midline{stroke:#507185;stroke-width:1;opacity:.55}#inputPath,#sourcePath,#selectedPath{fill:none;stroke-width:1.9;vector-effect:non-scaling-stroke}#inputPath{stroke:#7793a4;opacity:.7}#sourcePath{stroke:#67eddc}#selectedPath{stroke:#c39fff}.trace-footer{display:flex;justify-content:space-between;color:#678b9e;font:9px var(--mono);letter-spacing:.05em;padding-top:10px}
+.experiment{margin-top:18px;padding:29px 28px}.experiment-head{display:flex;justify-content:space-between;align-items:flex-start;gap:26px}.experiment-head h2{font-size:27px}.experiment-head p{max-width:740px;color:#a5bfca;line-height:1.7;font-size:12px;margin:12px 0 0}.btn-accent{background:#b2e8c9;border-color:#c4f4d9;color:#103b31;white-space:nowrap;margin-top:6px}.btn-accent:hover:not(:disabled){background:#d8ffe8}.experiment-body{display:grid;grid-template-columns:1.45fr 1fr;gap:19px;margin-top:24px}.bench-panel,.protocol{border:1px solid #284759;border-radius:4px;background:#0b2130;padding:21px}.bench-title,.protocol-title{font:10px var(--mono);letter-spacing:.06em;color:#b5d4db;display:flex;justify-content:space-between;gap:8px}.bench-title span{color:#77ceb9;font-size:9px}.bench-bars{margin:20px 0 9px;min-height:230px;display:flex;flex-direction:column;justify-content:center;gap:12px}.placeholder-bars{height:205px;display:grid;place-items:center;border:1px dashed #2c5360;color:#7096a8;font-size:12px;text-align:center;padding:20px}.bench-row{display:grid;grid-template-columns:112px 1fr 52px;gap:11px;align-items:center;font-size:11px;color:#a5bdc9}.bench-row.best .bench-score{color:#9df5d3}.bench-row.best .bench-bar{background:linear-gradient(90deg,#39bdb5,#9be9c7)}.bench-row.current .bench-label{color:#d8fff9}.bench-label{white-space:nowrap}.bench-rail{height:10px;background:#193645;border-radius:2px;overflow:hidden}.bench-bar{height:100%;background:linear-gradient(90deg,#5276ad,#ac8eeb);transition:width .45s}.bench-score{font:11px var(--mono);text-align:right;color:#cee7f1}.bench-footnote{color:#89b6c2;font-size:10px;margin:6px 0 0}.bench-scale{display:flex;justify-content:space-between;font:9px var(--mono);color:#658b9c}.protocol-title span{color:#85e4d6}.protocol dl{margin:13px 0 12px}.protocol dl div{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #264351;padding:11px 0}.protocol dt{color:#83a3b1;font-size:11px}.protocol dd{color:#e0f4f6;font:11px var(--mono);margin:0;text-align:right}.protocol p{color:#8babba;font-size:10px;line-height:1.65;margin-bottom:17px}.btn-outline{background:transparent;width:100%;color:#9ce9dd;border:1px solid #487a7c}
+.methodology{display:grid;grid-template-columns:1fr 1.3fr;gap:35px;margin:70px 0 65px;padding:0 13px}.methodology h2{font-size:clamp(27px,3vw,42px);line-height:1.16;margin-top:16px}.methodology em{color:var(--cyan);font-style:normal}.method-copy p{font-size:13px;line-height:1.9;color:#9ebac7;margin:0 0 17px}.method-copy strong{color:#d3f4f4}.paper-link{border:1px solid #31606b;border-radius:3px;display:flex;justify-content:space-between;gap:14px;padding:13px 16px;margin-top:25px;color:#94efde;font:10px var(--mono);letter-spacing:.03em}.paper-link:hover{background:#133547}.paper-link span{color:#8baab7}
+footer{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid #223949;color:#6c8fa0;font:9px var(--mono);letter-spacing:.08em;padding:23px 0 30px}
+@media(max-width:1130px){.shell{padding:0 22px}.workspace{grid-template-columns:minmax(0,1.5fr) minmax(285px,.85fr)}.topbar{gap:16px}.toplinks{gap:14px}.toplinks a{font-size:9px}.reading-grid{grid-template-columns:repeat(2,1fr)}.reading:nth-child(2){border:0}.reading:nth-child(n+3){padding-top:12px}.reading:nth-child(3){padding-left:0}.legend{font-size:7px;gap:8px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.topbar{height:76px}.toplinks{display:none}.badge{margin-left:auto}.intro{padding-top:46px}.intro-index{display:none}.controls-card .control-footer{margin-top:0}.experiment-body{grid-template-columns:1fr}.methodology{grid-template-columns:1fr;gap:14px}.experiment-head{flex-direction:column}.experiment-head .btn{width:100%}}
+@media(max-width:550px){.shell{padding:0 12px}.topbar{height:69px}.brand strong{font-size:13px}.brand small{font-size:8px}.logo{height:34px;width:34px}.badge{padding:8px;font-size:8px}.intro{padding:34px 3px 25px}.intro h1{font-size:42px}.intro>p{font-size:13px}.science-note{font-size:10px}.panel-head{padding:17px;height:74px}.panel h2{font-size:20px}.stage{margin:0 10px}.stage svg{min-height:255px}.stage-plate-top{top:11px;left:12px}.stage-plate-bottom{bottom:10px;left:11px;font-size:7px}.legend{top:12px;bottom:auto;right:9px;flex-direction:column;gap:4px}.transport{padding:11px;flex-wrap:wrap}.transport-time{font-size:8px}.reading-grid{padding:18px 12px}.reading{padding-left:10px}.reading>span{font-size:8px}.reading>strong{font-size:21px}.timeline{padding:19px 14px 14px}.timeline-head{flex-direction:column;align-items:flex-start}.trace-legend{gap:13px}.timeline svg{margin-top:14px;height:136px}.trace-footer{font-size:7px}.experiment{padding:22px 14px}.experiment-head h2{font-size:23px}.bench-panel,.protocol{padding:14px}.bench-row{grid-template-columns:96px 1fr 44px;gap:7px;font-size:10px}.bench-score{font-size:10px}.methodology{margin:44px 0;padding:0 5px}footer{flex-wrap:wrap;font-size:8px}footer span:nth-child(2){display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+</style>
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="logo" aria-hidden="true">◉</span><span><strong>AQUAΦ</strong><small>WETWARE / 001</small></span></div>
+      <nav class="toplinks" aria-label="Page navigation"><a href="#observatory">OBSERVATORY</a><a href="#experiment">EXPERIMENTS</a><a href="#methodology">METHOD</a></nav>
+      <div class="badge badge-green"><span class="blink"></span> LOCAL SIMULATION</div>
+    </header>
+    <main>
+      <section class="intro">
+        <div class="overline"><span class="tiny-rule"></span> AQUAΦ · THE WETWARE OBSERVATORY <span class="intro-index">EXPERIMENT 01 / 2026</span></div>
+        <h1>Can water <em>compute?</em></h1>
+        <p>Explore a network of seven virtual aqueous compartments. Change the connections, stimulate a droplet, and watch electrical states evolve. Then put the topologies to a reproducible test.</p>
+        <div class="science-note"><span class="note-icon">i</span><span><strong>Model status:</strong> an original, phenomenological simulation inspired by published neuromorphic-tissue research, not an experimentally validated physical replica.</span></div>
+      </section>
+
+      <section id="observatory" class="workspace" aria-labelledby="observatory-title">
+        <div class="display-card panel">
+          <div class="panel-head"><div><span class="eyebrow">01 / LIVE TISSUE</span><h2 id="observatory-title">Droplet network</h2></div><div class="chip" id="topologyChip">12 MEMBRANES</div></div>
+          <div class="stage" id="stage">
+            <svg id="network" viewBox="0 0 720 490" role="img" aria-label="Seven interactive droplets connected by voltage-gated membranes. Click a droplet to inspect its voltage.">
+              <defs>
+                <radialGradient id="dropletGrad"><stop offset="0" stop-color="#73f6ed" stop-opacity=".9"/><stop offset=".42" stop-color="#2ba9df" stop-opacity=".66"/><stop offset="1" stop-color="#206397" stop-opacity=".26"/></radialGradient>
+                <radialGradient id="dropletSelected"><stop offset="0" stop-color="#defaf2"/><stop offset=".37" stop-color="#76ddd8"/><stop offset="1" stop-color="#2278a9" stop-opacity=".53"/></radialGradient>
+                <filter id="softGlow" x="-90%" y="-90%" width="280%" height="280%"><feGaussianBlur stdDeviation="8"/></filter>
+                <filter id="lineGlow" x="-45%" y="-45%" width="190%" height="190%"><feGaussianBlur stdDeviation="3"/></filter>
+                <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M 32 0 L 0 0 0 32" fill="none" stroke="#92bfd9" stroke-width=".4" opacity=".11" /></pattern>
+              </defs>
+              <rect width="720" height="490" fill="url(#grid)" />
+              <circle cx="360" cy="241" r="194" fill="none" stroke="#4bcfcb" opacity=".08" stroke-dasharray="2 11" />
+              <circle cx="360" cy="241" r="148" fill="none" stroke="#4bcfcb" opacity=".11" stroke-dasharray="1 9" />
+              <g id="edgeLayer"></g><g id="nodeLayer"></g>
+            </svg>
+            <div class="stage-plate stage-plate-top"><span class="live-dot"></span><span id="runLabel">SIGNAL ACTIVE</span></div>
+            <div class="stage-plate stage-plate-bottom">CLICK A DROPLET TO INSPECT <span>↗</span></div>
+            <div class="legend"><span><i class="cyan"></i> POLARITY</span><span><i class="violet"></i> OPEN MEMBRANE</span></div>
+          </div>
+          <div class="transport"><div class="play-actions"><button id="toggleRun" class="btn btn-primary">Ⅱ <span>PAUSE</span></button><button id="stepBtn" class="btn btn-icon" title="One signal step" aria-label="One signal step">↦</button><button id="resetBtn" class="btn btn-icon" title="Reset the experiment" aria-label="Reset the experiment">↺</button></div><div class="transport-time">STEP <strong id="stepCount">00000</strong><span class="separator">/</span> SIM TIME <strong id="simTime">00.00</strong></div></div>
+          <div class="reading-grid">
+            <div class="reading"><span>SELECTED DROPLET</span><strong id="selectedLabel">D0 <i>· source</i></strong></div>
+            <div class="reading"><span>MEMBRANE GATES OPEN</span><strong id="gatesOpen">00<span class="small-unit"> / 12</span></strong></div>
+            <div class="reading"><span>ELECTRIC STATE</span><strong id="selectedVoltage">+0.000 <i>AU</i></strong></div>
+            <div class="reading"><span>NETWORK ACTIVITY</span><strong id="energy">0.000 <i>AU</i></strong></div>
+          </div>
+        </div>
+        <aside class="controls-card panel" aria-label="Experiment controls">
+          <div class="panel-head"><div><span class="eyebrow">02 / CONTROL ROOM</span><h2>Shape the system</h2></div><span class="settings-glyph">☷</span></div>
+          <div class="control-section"><div class="section-top"><span>NETWORK ARCHITECTURE</span><span class="section-counter">01</span></div><div class="topology-grid" id="topologyButtons" role="group" aria-label="Network topology"></div><p id="topologyDescription" class="hint">Center + neighboring membranes</p></div>
+          <div class="control-section"><div class="section-top"><span>STIMULUS</span><span class="section-counter">02</span></div><label class="field-label" for="signalType">Waveform</label><select id="signalType"><option value="mixed">Mixed frequencies</option><option value="pulse">Digital pulses</option><option value="chirp">Frequency sweep</option><option value="noise">Seeded noise</option></select></div>
+          <div class="control-section slider-section"><div class="section-top"><span>MEMBRANE PHYSICS</span><span class="section-counter">03</span></div>
+            <label for="coupling">Coupling strength <output id="couplingOut">0.85</output></label><input type="range" id="coupling" min="0" max="1.5" step="0.05" value="0.85" />
+            <label for="threshold">Opening threshold <output id="thresholdOut">0.22</output></label><input type="range" id="threshold" min="0.04" max="0.8" step="0.02" value="0.22" />
+            <label for="leak">Fading memory (leak) <output id="leakOut">0.25</output></label><input type="range" id="leak" min="0.05" max="0.8" step="0.05" value="0.25" />
+          </div>
+          <div class="control-footer"><span class="tiny-circle">?</span><p>Lower leak preserves electrical state longer. More connections do not automatically mean better computation.</p></div>
+        </aside>
+      </section>
+
+      <section class="timeline panel" aria-labelledby="timeline-title"><div class="timeline-head"><div><span class="eyebrow">03 / OSCILLOSCOPE</span><h2 id="timeline-title">State over time</h2></div><div class="trace-legend"><span><i class="input"></i>INPUT</span><span><i class="source"></i>SOURCE D0</span><span><i class="selected"></i>SELECTED NODE</span></div></div><svg id="trace" viewBox="0 0 1120 158" preserveAspectRatio="none" role="img" aria-label="Time series trace of incoming stimulus and droplet voltage"><g id="traceGrid"></g><path id="inputPath" /><path id="sourcePath" /><path id="selectedPath" /></svg><div class="trace-footer"><span>PAST ←</span><span>RECENT SIGNAL WINDOW / 150 SAMPLES</span><span>→ NOW</span></div></section>
+
+      <section id="experiment" class="experiment panel" aria-labelledby="experiment-title"><div class="experiment-head"><div><span class="eyebrow">04 / EVIDENCE GATE</span><h2 id="experiment-title">Does topology improve memory?</h2><p>Train the same 16-feature readout on every network, then measure reconstruction of a signal from five steps earlier on held-out data. Lower normalized error is better.</p></div><button class="btn btn-accent" id="benchBtn">▶ RUN COMPARISON</button></div>
+        <div class="experiment-body"><div class="bench-panel"><div class="bench-title">HELD-OUT NORMALIZED RMSE <span id="benchStatus">NOT YET RUN</span></div><div id="benchBars" class="bench-bars"><div class="placeholder-bars"><span>Run the comparison to see measured results from this simulation.</span></div></div><div class="bench-scale"><span>0.0 / LOWER IS BETTER</span><span>ERROR / NRMSE</span></div></div><div class="protocol"><div class="protocol-title">FROZEN PROTOCOL <span>v0.1</span></div><dl><div><dt>Seed</dt><dd>369</dd></div><div><dt>Warmup / train / test</dt><dd>100 / 340 / 180</dd></div><div><dt>Target</dt><dd>Input at t − 5</dd></div><div><dt>Readout</dt><dd>Ridge λ = 0.04</dd></div><div><dt>Variables</dt><dd>Topology only*</dd></div></dl><p>*Uses the current physics-slider values for every topology. This is a computational toy benchmark, not laboratory evidence.</p><button class="btn btn-outline" id="exportBtn" disabled>↓ EXPORT JSON RECEIPT</button></div></div>
+      </section>
+
+      <section id="methodology" class="methodology"><div><span class="eyebrow">05 / THE HONEST PART</span><h2>Physics-inspired.<br /><em>Evidence-first.</em></h2></div><div class="method-copy"><p>Real neuromorphic tissues use aqueous droplets, lipid membranes and voltage-gated ion channels. This sandbox uses normalized voltage, a membrane-polarization state and a smooth gate that changes inter-droplet conductance. Parameters are deliberately <strong>not</strong> presented as measured physical units.</p><p>Our experimental question: how does graph connectivity affect fading memory under identical stimulation and readout? Results are simulation-specific. The “Nested motif” topology is a speculative architectural comparison, not proof of Nested Bubble Gear or any physical theory.</p><a class="paper-link" href="https://doi.org/10.1126/sciadv.aed0971" target="_blank" rel="noopener noreferrer">↗ READ THE PEER-REVIEWED STUDY <span>SCIENCE ADVANCES · 2026</span></a></div></section>
+    </main>
+    <footer><span>AQUAΦ RESEARCH © 2026 · OPEN EXPERIMENT</span><span>BUILT FOR CURIOSITY. GOVERNED BY EVIDENCE.</span><span>MODEL v0.1.0</span></footer>
+  </div>
+  <script>
+/**
+ * AquaPhi: original, phenomenological droplet-network model.
+ * Inspired by biomolecular aqueous compartments, NOT a calibrated or replicated
+ * model of any published experimental system.
+ */
+const VERSION = '0.1.0';
+const NODE_COUNT = 7;
+
+const POSITIONS = [
+  [0, 0],
+  ...Array.from({ length: 6 }, (_, i) => {
+    const theta = (-Math.PI / 2) + i * (Math.PI / 3);
+    return [Math.cos(theta), Math.sin(theta)];
+  }),
+];
+
+const TOPOLOGIES = {
+  tissue: { name: 'Cell tissue', subtitle: 'Center + neighboring membranes' },
+  star: { name: 'Hub & spoke', subtitle: 'One coordinating compartment' },
+  chain: { name: 'Serial chain', subtitle: 'A single conduction pathway' },
+  isolated: { name: 'Isolated', subtitle: 'No membrane interconnects' },
+  dense: { name: 'Dense mesh', subtitle: 'All-to-all toy comparison' },
+  nested: { name: 'Nested motif', subtitle: 'Exploratory NBG-inspired graph, not NBG validation' },
+};
+
+function link(a, b) { return [Math.min(a, b), Math.max(a, b)]; }
+
+function edgesForTopology(topology) {
+  const e = [];
+  if (topology === 'isolated') return e;
+  if (topology === 'dense') {
+    for (let i = 0; i < NODE_COUNT; i++) for (let j = i + 1; j < NODE_COUNT; j++) e.push([i, j]);
+  } else if (topology === 'star') {
+    for (let i = 1; i < NODE_COUNT; i++) e.push([0, i]);
+  } else if (topology === 'chain') {
+    for (let i = 0; i < NODE_COUNT - 1; i++) e.push([i, i + 1]);
+  } else if (topology === 'tissue') {
+    for (let i = 1; i < NODE_COUNT; i++) {
+      e.push([0, i]);
+      e.push(link(i, (i % 6) + 1));
+    }
+  } else if (topology === 'nested') {
+    // An exploratory motif: a center, inner triangle, outer triangle, and bridges.
+    // Topology is a hypothesis generator; it does not implement NBG mathematics.
+    for (const pair of [[0,1],[0,3],[0,5],[1,3],[3,5],[5,1],
+      [2,4],[4,6],[6,2],[1,2],[3,4],[5,6]]) e.push(link(...pair));
+  } else {
+    throw new Error(`Unknown topology: ${topology}`);
+  }
+  return [...new Map(e.map(pair => [pair.join(':'), pair])).values()];
+}
+
+const DEFAULT_PARAMS = Object.freeze({
+  coupling: 0.85,
+  threshold: 0.22,
+  leak: 0.25,
+  drive: 1.35,
+  gateTau: 0.42,
+  memTau: 0.36,
+  capacitance: 1,
+});
+
+function createNetwork(topology = 'tissue', params = DEFAULT_PARAMS) {
+  const safe = { ...DEFAULT_PARAMS, ...params };
+  return {
+    topology,
+    params: safe,
+    nodes: Array.from({ length: NODE_COUNT }, (_, id) => ({ id, voltage: 0 })),
+    edges: edgesForTopology(topology).map(([a, b]) => ({ a, b, polarization: 0, gate: 0 })),
+    t: 0,
+    steps: 0,
+  };
+}
+
+function sigmoid(x) { return 1 / (1 + Math.exp(-Math.max(-40, Math.min(40, x)))); }
+function stepNetwork(net, input, dt = 0.13) {
+  if (!(dt > 0 && dt <= 0.25)) throw new Error('dt must be in (0, 0.25]');
+  const { params: p, nodes, edges } = net;
+  const drives = nodes.map(n => -p.leak * n.voltage);
+  const signal = Math.max(-2, Math.min(2, Number.isFinite(input) ? input : 0));
+  drives[0] += p.drive * signal;
+
+  // Each shared membrane has a charge-like state and a nonlinear conductive gate.
+  // These are normalized toy variables, NOT measured ion-channel parameters.
+  for (const e of edges) {
+    const delta = nodes[e.a].voltage - nodes[e.b].voltage;
+    e.polarization += dt * (Math.abs(delta) - e.polarization) / p.memTau;
+    const target = sigmoid((e.polarization - p.threshold) * 17);
+    e.gate = Math.max(0, Math.min(1, e.gate + dt * (target - e.gate) / p.gateTau));
+    const flow = p.coupling * (0.018 + 0.982 * e.gate) * delta;
+    drives[e.a] -= flow;
+    drives[e.b] += flow;
+  }
+
+  for (let i = 0; i < nodes.length; i++) {
+    nodes[i].voltage = Math.max(-6, Math.min(6, nodes[i].voltage + (dt / p.capacitance) * drives[i]));
+  }
+  net.t += dt;
+  net.steps++;
+  return net;
+}
+
+function advance(net, input, substeps = 3) {
+  for (let i = 0; i < substeps; i++) stepNetwork(net, input, 0.13);
+  return net;
+}
+
+function activeGates(net, cutoff = 0.5) {
+  return net.edges.filter(e => e.gate >= cutoff).length;
+}
+
+function networkFeatures(net) {
+  // Observation-only output. The requested target is deliberately NOT a feature.
+  return [1, ...net.nodes.map(n => n.voltage), ...net.nodes.map(n => n.voltage * n.voltage),
+    net.edges.length ? net.edges.reduce((a, b) => a + b.gate, 0) / net.edges.length : 0];
+}
+
+function seededRandom(seed) {
+  let s = (seed >>> 0) || 1;
+  return function next() {
+    s += 0x6D2B79F5;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Fixed-seed low-pass nonperiodic input for delayed signal reconstruction. */
+function makeSequence(length, seed = 369) {
+  const rand = seededRandom(seed);
+  const arr = [];
+  let x = 0;
+  for (let i = 0; i < length; i++) {
+    x = 0.35 * x + 0.65 * (2 * rand() - 1);
+    arr.push(0.7 * x + 0.15 * Math.sin(i * 0.083) + 0.12 * Math.sin(i * 0.031));
+  }
+  return arr;
+}
+
+function dot(a, b) { let s = 0; for (let k = 0; k < a.length; k++) s += a[k] * b[k]; return s; }
+
+/** Ridge regression by normal equations, solved with partial-pivot elimination. */
+function ridgeFit(X, y, lambda = 0.04) {
+  if (!X.length || X.length !== y.length) throw new Error('Invalid training data');
+  const dim = X[0].length;
+  const a = Array.from({ length: dim }, () => Array(dim + 1).fill(0));
+  for (let r = 0; r < X.length; r++) {
+    const xi = X[r];
+    for (let i = 0; i < dim; i++) {
+      a[i][dim] += xi[i] * y[r];
+      for (let j = 0; j < dim; j++) a[i][j] += xi[i] * xi[j];
+    }
+  }
+  for (let i = 1; i < dim; i++) a[i][i] += lambda * X.length;
+  a[0][0] += 1e-8;
+  for (let i = 0; i < dim; i++) {
+    let maxRow = i;
+    for (let k = i + 1; k < dim; k++) if (Math.abs(a[k][i]) > Math.abs(a[maxRow][i])) maxRow = k;
+    [a[maxRow], a[i]] = [a[i], a[maxRow]];
+    const divisor = a[i][i];
+    if (Math.abs(divisor) < 1e-12) continue;
+    for (let j = i; j <= dim; j++) a[i][j] /= divisor;
+    for (let k = 0; k < dim; k++) {
+      if (k === i) continue;
+      const f = a[k][i];
+      for (let j = i; j <= dim; j++) a[k][j] -= f * a[i][j];
+    }
+  }
+  return a.map(row => row[dim]);
+}
+
+/**
+ * Seeded, leakage-free train/test comparison with identical timing, stimulus,
+ * hyperparameters and feature dimensions for every topology. No tuning to test.
+ * Predict input[t-delay] from current reservoir observation.
+ */
+function benchmarkTopology(topology, options = {}) {
+  const {
+    seed = 369, delay = 5, warmup = 100, train = 340, test = 180,
+    lambda = 0.04, params = DEFAULT_PARAMS,
+  } = options;
+  if (!(delay >= 1 && delay < warmup)) throw new Error('delay must be >=1 and < warmup');
+  const total = warmup + train + test;
+  const signal = makeSequence(total, seed);
+  const net = createNetwork(topology, params);
+  const trainX = [], trainY = [], testX = [], testY = [];
+  for (let t = 0; t < total; t++) {
+    advance(net, signal[t]);
+    if (t < warmup) continue;
+    const x = networkFeatures(net);
+    const y = signal[t - delay];
+    if (t < warmup + train) { trainX.push(x); trainY.push(y); }
+    else { testX.push(x); testY.push(y); }
+  }
+  const weights = ridgeFit(trainX, trainY, lambda);
+  const predicted = testX.map(x => dot(x, weights));
+  const mean = testY.reduce((a,b)=>a+b,0)/testY.length;
+  const mse = predicted.reduce((acc, yhat, i) => acc + (testY[i]-yhat)**2, 0)/testY.length;
+  const variance = testY.reduce((acc,y) => acc + (y-mean)**2, 0)/testY.length;
+  const nrmse = Math.sqrt(mse / Math.max(variance, 1e-12));
+  return {
+    topology, seed, delay, train, test, warmup, lambda,
+    nrmse, r2: 1 - mse / Math.max(variance,1e-12),
+    target: testY, predicted,
+  };
+}
+
+function benchmarkAll(options = {}) {
+  return Object.keys(TOPOLOGIES).map(key => benchmarkTopology(key, options));
+}
+
+const el = id => document.getElementById(id);
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const state = {
+  topology: 'tissue', params: { ...DEFAULT_PARAMS }, net: createNetwork(),
+  running: true, selected: 0, sample: 0, signal: 'mixed',
+  history: [], lastFrame: 0, bench: null, noise: seededRandom(369),
+};
+const coord = i => ({ x: 360 + POSITIONS[i][0] * 151, y: 241 + POSITIONS[i][1] * 151 });
+function svg(tag, attrs = {}, parent) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+  if (parent) parent.appendChild(node);
+  return node;
+}
+
+let edgeVisuals = [], nodeVisuals = [];
+function buildGraph() {
+  const edgeLayer = el('edgeLayer');
+  const nodeLayer = el('nodeLayer');
+  edgeLayer.replaceChildren(); nodeLayer.replaceChildren();
+  edgeVisuals = state.net.edges.map(e => {
+    const a = coord(e.a), b = coord(e.b);
+    const background = svg('line', {x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'membrane-base'}, edgeLayer);
+    const glow = svg('line', {x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'membrane-glow'}, edgeLayer);
+    const active = svg('line', {x1:a.x,y1:a.y,x2:b.x,y2:b.y,class:'membrane-flow'}, edgeLayer);
+    return { background, glow, active };
+  });
+  nodeVisuals = state.net.nodes.map((node, index) => {
+    const { x, y } = coord(index);
+    const group = svg('g', {transform:`translate(${x} ${y})`,class:'droplet',tabindex:'0',role:'button',
+      'aria-label':`Inspect droplet D${index}`}, nodeLayer);
+    const haze = svg('circle', {r:'56',class:'drop-haze'}, group);
+    const shell = svg('circle', {r:'42',class:'drop-shell'}, group);
+    const shine = svg('ellipse', {cx:'-12',cy:'-18',rx:'17',ry:'8',class:'drop-shine'},group);
+    const name = svg('text', {y:'4',class:'drop-name','text-anchor':'middle'},group);
+    name.textContent = `D${index}`;
+    const value = svg('text', {y:'22',class:'drop-value','text-anchor':'middle'},group);
+    value.textContent = '0.00';
+    group.addEventListener('click', () => { state.selected = index; paint(); });
+    group.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); state.selected = index; paint(); }
+    });
+    return { group, shell, haze, value };
+  });
+}
+
+function topologyButtons() {
+  const names = { tissue:'◉', star:'✣', chain:'⌁', isolated:'◌', dense:'▦', nested:'◇' };
+  el('topologyButtons').replaceChildren();
+  for (const [key, description] of Object.entries(TOPOLOGIES)) {
+    const button = document.createElement('button');
+    button.className = `topology-btn${key === state.topology ? ' active' : ''}`;
+    button.setAttribute('aria-pressed', key === state.topology ? 'true' : 'false');
+    button.innerHTML = `<span class="topology-icon" aria-hidden="true">${names[key]}</span><span>${description.name}</span>`;
+    button.addEventListener('click', () => {
+      state.topology = key;
+      state.selected = 0;
+      reset(); topologyButtons();
+    });
+    el('topologyButtons').appendChild(button);
+  }
+  el('topologyDescription').textContent = TOPOLOGIES[state.topology].subtitle;
+}
+
+function reset() {
+  state.net = createNetwork(state.topology, state.params);
+  state.sample = 0;
+  state.history = [];
+  state.noise = seededRandom(369);
+  state.bench = null;
+  el('exportBtn').disabled = true;
+  el('benchBars').innerHTML = '<div class="placeholder-bars"><span>Run the comparison to see measured results from this simulation.</span></div>';
+  el('benchStatus').textContent = 'NOT YET RUN';
+  el('topologyChip').textContent = `${state.net.edges.length.toString().padStart(2,'0')} MEMBRANES`;
+  buildGraph(); paint(); drawTrace();
+}
+
+function stimulus(n) {
+  switch (state.signal) {
+    case 'pulse': return n % 68 < 19 ? 0.95 : -0.16;
+    case 'chirp': return 0.82 * Math.sin(n * 0.017 + 0.00018 * n * n);
+    case 'noise': return (state.noise() * 2 - 1) * 0.85;
+    default: return 0.58 * Math.sin(n * .069) + 0.31 * Math.sin(n * .19) + 0.15 * Math.sin(n * .027);
+  }
+}
+function tick() {
+  const input = stimulus(state.sample);
+  advance(state.net, input);
+  state.sample++;
+  state.history.push({ input, source: state.net.nodes[0].voltage,
+    voltages: state.net.nodes.map(n => n.voltage) });
+  if (state.history.length > 150) state.history.shift();
+  paint(); drawTrace();
+}
+function formatV(v, digits=3) { return `${v >= 0 ? '+' : ''}${v.toFixed(digits)}`; }
+function paint() {
+  const net = state.net;
+  net.edges.forEach((edge, i) => {
+    const ui = edgeVisuals[i];
+    const opacity = Math.max(0.06, edge.gate);
+    ui.active.style.opacity = String(opacity * .86);
+    ui.active.style.strokeWidth = String(1.5 + 5.5 * edge.gate);
+    ui.glow.style.opacity = String(opacity * .36);
+    ui.glow.style.strokeWidth = String(4 + 9 * edge.gate);
+  });
+  net.nodes.forEach((node, i) => {
+    const ui = nodeVisuals[i];
+    const power = Math.min(1, Math.abs(node.voltage) / 1.25);
+    ui.group.classList.toggle('selected', i === state.selected);
+    ui.group.classList.toggle('is-source', i === 0);
+    ui.shell.setAttribute('r', String(42 + power * 5));
+    ui.shell.style.opacity = String(0.58 + power * 0.42);
+    ui.haze.style.opacity = String(0.16 + power * .62);
+    ui.value.textContent = formatV(node.voltage, 2);
+  });
+  el('stepCount').textContent = String(state.sample).padStart(5,'0');
+  el('simTime').textContent = net.t.toFixed(2);
+  el('selectedLabel').innerHTML = `D${state.selected} <i>· ${state.selected === 0 ? 'source' : 'sensor'}</i>`;
+  el('gatesOpen').innerHTML = `${String(activeGates(net)).padStart(2, '0')}<span class="small-unit"> / ${net.edges.length.toString().padStart(2,'0')}</span>`;
+  el('selectedVoltage').innerHTML = `${formatV(net.nodes[state.selected].voltage)} <i>AU</i>`;
+  const avgEnergy = net.nodes.reduce((sum, node) => sum + node.voltage ** 2, 0) / net.nodes.length;
+  el('energy').innerHTML = `${avgEnergy.toFixed(3)} <i>AU</i>`;
+  el('runLabel').textContent = state.running ? 'SIGNAL ACTIVE' : 'SIMULATION PAUSED';
+  el('toggleRun').innerHTML = state.running ? 'Ⅱ <span>PAUSE</span>' : '▶ <span>PLAY</span>';
+}
+
+function chartPath(getVal, colorScale = 1) {
+  const series = state.history;
+  if (!series.length) return '';
+  return series.map((sample, i) => {
+    const x = (i / 149) * 1100 + 10;
+    const y = 79 - Math.max(-2.3, Math.min(2.3, getVal(sample) * colorScale)) * 30;
+    return `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+}
+function drawTrace() {
+  el('inputPath').setAttribute('d', chartPath(x => x.input));
+  el('sourcePath').setAttribute('d', chartPath(x => x.source));
+  el('selectedPath').setAttribute('d', state.selected ? chartPath(x => x.voltages[state.selected]) : '');
+}
+function drawTraceGrid() {
+  const g = el('traceGrid'); g.replaceChildren();
+  for (let y = 12; y <= 146; y += 33.5) svg('line', {x1:0,y1:y,x2:1120,y2:y,class:'chart-gridline'},g);
+  for (let x = 20; x <= 1120; x += 110) svg('line', {x1:x,y1:0,x2:x,y2:158,class:'chart-gridline'},g);
+  svg('line', {x1:0,y1:79,x2:1120,y2:79,class:'chart-midline'},g);
+}
+function bind() {
+  topologyButtons(); drawTraceGrid(); reset();
+  el('toggleRun').addEventListener('click', () => { state.running = !state.running; paint(); });
+  el('stepBtn').addEventListener('click', () => { state.running = false; tick(); });
+  el('resetBtn').addEventListener('click', reset);
+  el('signalType').addEventListener('change', e => { state.signal = e.target.value; reset(); });
+  for (const key of ['coupling','threshold','leak']) {
+    el(key).addEventListener('input', e => {
+      const v = Number(e.target.value);
+      state.params[key] = v;
+      state.net.params[key] = v;
+      el(`${key}Out`).textContent = v.toFixed(2);
+      if (state.bench) {
+        state.bench = null;
+        el('exportBtn').disabled = true;
+        el('benchStatus').textContent = 'SETTINGS CHANGED · RERUN';
+      }
+    });
+  }
+  el('benchBtn').addEventListener('click', () => {
+    const button = el('benchBtn');
+    button.disabled = true; button.textContent = '◌ CALCULATING...';
+    el('benchStatus').textContent = 'RUNNING';
+    setTimeout(() => {
+      try {
+        const results = benchmarkAll({ params: { ...state.params } });
+        state.bench = { version: VERSION, timestamp: new Date().toISOString(),
+          study: 'Phenomenological simulator, not laboratory replication',
+          source: '10.1126/sciadv.aed0971',
+          protocol: { seed:369, delay:5, warmup:100, train:340, test:180,
+            lambda:0.04, readoutFeatures:16, target:'signal[t-5]', metric:'test NRMSE, lower is better' },
+          params: {...state.params}, results };
+        showBench(results);
+        el('exportBtn').disabled = false;
+        el('benchStatus').textContent = 'COMPLETED · TEST SPLIT';
+      } catch (error) {
+        el('benchStatus').textContent = `ERROR · ${error.message}`;
+      } finally { button.disabled = false; button.textContent = '↻ RERUN COMPARISON'; }
+    }, 45);
+  });
+  el('exportBtn').addEventListener('click', () => {
+    if (!state.bench) return;
+    const blob = new Blob([JSON.stringify(state.bench, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'softdroplet-topology-receipt-v0.1.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+  requestAnimationFrame(frame);
+}
+function showBench(results) {
+  const all = el('benchBars'); all.replaceChildren();
+  const max = Math.max(1.05, ...results.map(r => r.nrmse)) * 1.1;
+  const best = Math.min(...results.map(r => r.nrmse));
+  results.forEach(result => {
+    const row = document.createElement('div');
+    row.className = `bench-row${result.nrmse === best ? ' best' : ''}${result.topology === state.topology ? ' current' : ''}`;
+    const label = document.createElement('div'); label.className = 'bench-label';
+    label.textContent = TOPOLOGIES[result.topology].name;
+    const rail = document.createElement('div'); rail.className = 'bench-rail';
+    const bar = document.createElement('div'); bar.className = 'bench-bar';
+    bar.style.width = `${Math.max(1,(result.nrmse / max) * 100)}%`;
+    rail.append(bar);
+    const value = document.createElement('div'); value.className = 'bench-score';
+    value.textContent = result.nrmse.toFixed(3);
+    row.append(label, rail, value); all.appendChild(row);
+  });
+  const desc = document.createElement('p'); desc.className = 'bench-footnote';
+  desc.textContent = 'Best on this frozen run: ' + TOPOLOGIES[results.find(r=>r.nrmse===best).topology].name + '. Results are model-specific; no claim of a universal winner.';
+  all.appendChild(desc);
+}
+function frame(timestamp) {
+  if (state.running && timestamp - state.lastFrame >= 72) {
+    state.lastFrame = timestamp;
+    tick();
+  }
+  requestAnimationFrame(frame);
+}
+bind();
+
+</script>
+</body>
+</html>
