@@ -439,7 +439,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const state = {
   topology: 'tissue', params: { ...DEFAULT_PARAMS }, net: createNetwork(),
   running: true, selected: 0, sample: 0, signal: 'mixed',
-  history: [], lastFrame: 0, bench: null, noise: seededRandom(369),
+  history: [], lastFrame: 0, bench: null, memory: null, memorySelected: 'tissue', noise: seededRandom(369),
 };
 const coord = i => ({ x: 360 + POSITIONS[i][0] * 151, y: 241 + POSITIONS[i][1] * 151 });
 function svg(tag, attrs = {}, parent) {
@@ -597,6 +597,15 @@ function bind() {
         el('exportBtn').disabled = true;
         el('benchStatus').textContent = 'SETTINGS CHANGED · RERUN';
       }
+      if (state.memory) {
+        state.memory = null;
+        el('memoryExportBtn').disabled = true;
+        el('memoryStatus').textContent = 'SETTINGS CHANGED · RERUN';
+        el('memoryRows').innerHTML = '<p class="memory-empty">Physics changed. Rerun to compare matching settings.</p>';
+        el('memoryCurve').setAttribute('d','');
+        el('memoryTraceTitle').textContent = 'STALE DATA CLEARED';
+        el('memoryTraceNote').textContent = 'Rerun the challenge after changing physics parameters.';
+      }
     });
   }
   el('benchBtn').addEventListener('click', () => {
@@ -624,10 +633,75 @@ function bind() {
     if (!state.bench) return;
     const blob = new Blob([JSON.stringify(state.bench, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'softdroplet-topology-receipt-v0.1.json'; a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'aquaphi-topology-receipt-v0.2.json'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
+
+  el('memoryBtn').addEventListener('click', () => {
+    const btn=el('memoryBtn');
+    btn.disabled=true;btn.textContent='◌ CALCULATING...';
+    el('memoryStatus').textContent='RUNNING';
+    setTimeout(()=>{
+      try{
+        const results=runMemorySuite({params:{...state.params}});
+        state.memory={
+          version:VERSION,generatedAt:new Date().toISOString(),
+          provenance:'Original phenomenological simulation; not physical data or NBG verification',
+          source:'10.1126/sciadv.aed0971',...results,
+        };
+        drawMemoryResults();
+        el('memoryExportBtn').disabled=false;
+        el('memoryStatus').textContent='12-SEED TEST COMPLETE';
+      }catch(error){el('memoryStatus').textContent='ERROR · '+error.message;}
+      finally{btn.disabled=false;btn.textContent='↻ RERUN MEMORY CHALLENGE';}
+    },45);
+  });
+  el('memoryExportBtn').addEventListener('click',()=>{
+    if(!state.memory)return;
+    const blob=new Blob([JSON.stringify(state.memory,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='aquaphi-memory-receipt-v0.2.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
   requestAnimationFrame(frame);
+}
+function drawMemoryResults(){
+  if(!state.memory)return;
+  const rows=el('memoryRows');rows.replaceChildren();
+  for(const r of state.memory.results){
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='memory-row'+(r.topology===state.memorySelected?' active':'');
+    button.setAttribute('aria-pressed',String(r.topology===state.memorySelected));
+    const half=r.reachCount===0?'NO REACH':
+      r.halfDecaySteps.n===0?'CENSORED':r.halfDecaySteps.mean.toFixed(1)+' steps';
+    const label=document.createElement('span');
+    const name=document.createElement('strong');name.textContent=TOPOLOGIES[r.topology].name;
+    const size=document.createElement('small');size.textContent=r.edges+' MEMBRANES';
+    label.append(name,size);
+    const area=document.createElement('span');area.className='memory-num';
+    area.textContent=r.releaseArea.mean.toFixed(2)+' ± '+r.releaseArea.sd.toFixed(2);
+    const decay=document.createElement('span');decay.className='memory-num';decay.textContent=half;
+    button.append(label,area,decay);
+    button.addEventListener('click',()=>{state.memorySelected=r.topology;drawMemoryResults();});
+    rows.append(button);
+  }
+  showMemoryTrace(state.memory.results.find(r=>r.topology===state.memorySelected)||state.memory.results[0]);
+}
+function showMemoryTrace(result){
+  const series=result.example.pulse.concat(result.example.release);
+  const peak=Math.max(0.02,...series);
+  const x=i=>20+(i/(series.length-1))*680;
+  const y=v=>138-(v/(peak*1.1))*118;
+  el('memoryCurve').setAttribute('d',series.map((v,i)=>
+    (i===0?'M':'L')+x(i).toFixed(2)+' '+y(v).toFixed(2)).join(' '));
+  el('memoryTraceTitle').textContent=TOPOLOGIES[result.topology].name.toUpperCase()+
+    ' / SEED '+result.example.seed;
+  const detection=result.reachCount+' of '+result.trials+
+    ' trials exceeded the 0.02 AU detection floor';
+  const censored=result.censoredCount?'; '+result.censoredCount+' half-decays were censored':'';
+  el('memoryTraceNote').textContent=detection+censored+
+    '. Representative curve plots downstream RMS (D1–D6) during stimulation and release.';
 }
 function showBench(results) {
   const all = el('benchBars'); all.replaceChildren();
