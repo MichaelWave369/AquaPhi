@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-const match = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/g)]
+const match = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
   .find(m => m[1].includes('function benchmarkAll('));
 assert.ok(match, 'The published page must contain its standalone simulation');
 const modelSource = match[1].split('const el = id =>')[0];
@@ -67,6 +67,6 @@ test('readout recovers a simple linear function', () => {
 test('published page includes accurate scientific qualification and citations', () => {
   assert.match(html, /not an experimentally validated physical replica/i);
   assert.match(html, /not proof of Nested Bubble Gear/i);
-  assert.match(html, /10\\.1126\\/sciadv\\.aed0971/);
+  assert.match(html, /10\.1126\/sciadv\.aed0971/);
   assert.match(html, /AQUAΦ/);
 });
