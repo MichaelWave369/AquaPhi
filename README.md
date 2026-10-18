@@ -12,6 +12,12 @@ GitHub Pages: **https://michaelwave369.github.io/AquaPhi/** (available after thi
 
 Open `index.html` directly in a browser. No dependencies, backend, paid services, telemetry, or build system. Optional Google Fonts are the only remote appearance resource and have local fallbacks.
 
+## Enable GitHub Pages (one-time)
+
+The repository includes `.github/workflows/pages.yml` to publish the standalone page. In **Settings → Pages → Build and deployment**, select **Source: GitHub Actions**. This setting is essential: passing the `Verify AquaPhi` test does **not** publish a site.
+
+After the deployment workflow succeeds on `main`, open https://michaelwave369.github.io/AquaPhi/ . If publication is still pending, check **Actions → Publish AquaPhi to GitHub Pages** for any configuration or permissions errors. The deploy can also be retriggered from **Actions → Publish AquaPhi to GitHub Pages → Run workflow**.
+
 ## Explore
 
 - Seven virtual droplets and six graph topologies: tissue, hub-and-spoke, chain, isolated, dense and exploratory nested motif.
