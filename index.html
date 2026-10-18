@@ -93,7 +93,7 @@ footer{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
 
       <section id="methodology" class="methodology"><div><span class="eyebrow">05 / THE HONEST PART</span><h2>Physics-inspired.<br /><em>Evidence-first.</em></h2></div><div class="method-copy"><p>Real neuromorphic tissues use aqueous droplets, lipid membranes and voltage-gated ion channels. This sandbox uses normalized voltage, a membrane-polarization state and a smooth gate that changes inter-droplet conductance. Parameters are deliberately <strong>not</strong> presented as measured physical units.</p><p>Our experimental question: how does graph connectivity affect fading memory under identical stimulation and readout? Results are simulation-specific. The “Nested motif” topology is a speculative architectural comparison, not proof of Nested Bubble Gear or any physical theory.</p><a class="paper-link" href="https://doi.org/10.1126/sciadv.aed0971" target="_blank" rel="noopener noreferrer">↗ READ THE PEER-REVIEWED STUDY <span>SCIENCE ADVANCES · 2026</span></a></div></section>
     </main>
-    <footer><span>AQUAΦ RESEARCH © 2026 · OPEN EXPERIMENT</span><span>BUILT FOR CURIOSITY. GOVERNED BY EVIDENCE.</span><span>MODEL v0.1.0</span></footer>
+    <footer><span>AQUAΦ RESEARCH © 2026 · OPEN EXPERIMENT</span><span>BUILT FOR CURIOSITY. GOVERNED BY EVIDENCE.</span><span>MODEL v0.2.0</span></footer>
   </div>
   <script>
 /**
@@ -101,7 +101,7 @@ footer{display:flex;justify-content:space-between;align-items:center;gap:12px;bo
  * Inspired by biomolecular aqueous compartments, NOT a calibrated or replicated
  * model of any published experimental system.
  */
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const NODE_COUNT = 7;
 
 const POSITIONS = [
@@ -306,6 +306,75 @@ function benchmarkTopology(topology, options = {}) {
 
 function benchmarkAll(options = {}) {
   return Object.keys(TOPOLOGIES).map(key => benchmarkTopology(key, options));
+}
+
+
+/** AquaMemory v0.2. All values in toy units, never physical voltages or seconds. */
+const MEMORY_PROTOCOL = Object.freeze({seedStart:369,trials:12,pulseSteps:36,releaseSteps:120,detectionFloor:0.02,halfFraction:0.5,fixedProbe:20});
+function downstreamRms(net) {
+  const v=net.nodes.slice(1); // D0 is stimulated: measure only other compartments.
+  return Math.sqrt(v.reduce((sum,n)=>sum+n.voltage*n.voltage,0)/v.length);
+}
+function pulseReleaseTrial(topology, options={}) {
+  const {seed=369,params=DEFAULT_PARAMS,
+    pulseSteps=MEMORY_PROTOCOL.pulseSteps,releaseSteps=MEMORY_PROTOCOL.releaseSteps,
+    detectionFloor=MEMORY_PROTOCOL.detectionFloor}=options;
+  if(!Number.isInteger(pulseSteps)||pulseSteps<2||!Number.isInteger(releaseSteps)||
+     releaseSteps<MEMORY_PROTOCOL.fixedProbe||!Number.isFinite(detectionFloor)||detectionFloor<=0)
+    throw new Error('Invalid memory protocol');
+  const random=seededRandom(seed), net=createNetwork(topology,params), pulse=[],release=[];
+  for(let i=0;i<pulseSteps;i++){advance(net,0.68+0.38*random());pulse.push(downstreamRms(net));}
+  for(let i=0;i<releaseSteps;i++){advance(net,0);release.push(downstreamRms(net));}
+  const peak=Math.max(...release),peakAt=release.indexOf(peak),detected=peak>=detectionFloor;
+  let halfDecaySteps=null;
+  if(detected){
+    for(let t=peakAt+1;t<release.length;t++){
+      if(release[t]<=peak*MEMORY_PROTOCOL.halfFraction){halfDecaySteps=t-peakAt;break;}
+    }
+  }
+  return {topology,seed,edges:net.edges.length,detected,
+    censored:detected&&halfDecaySteps===null,peak,peakAt,halfDecaySteps,
+    releaseArea:release.reduce((sum,v)=>sum+v,0),
+    at20:release[MEMORY_PROTOCOL.fixedProbe-1],pulse,release};
+}
+function memoryStats(values) {
+  if(!values.length)return {mean:null,sd:null,n:0};
+  const mean=values.reduce((a,b)=>a+b,0)/values.length;
+  const sd=values.length<2?0:Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/(values.length-1));
+  return {mean,sd,n:values.length};
+}
+function summarizeMemoryTrials(topology,trials) {
+  const detected=trials.filter(t=>t.detected);
+  const observed=detected.filter(t=>t.halfDecaySteps!==null);
+  return {topology,edges:edgesForTopology(topology).length,trials:trials.length,
+    reachCount:detected.length,censoredCount:detected.length-observed.length,
+    peak:memoryStats(trials.map(t=>t.peak)),
+    releaseArea:memoryStats(trials.map(t=>t.releaseArea)),
+    at20:memoryStats(trials.map(t=>t.at20)),
+    halfDecaySteps:memoryStats(observed.map(t=>t.halfDecaySteps)),
+    example:{seed:trials[0].seed,pulse:trials[0].pulse,release:trials[0].release},
+    perTrial:trials.map(({seed,detected,censored,peak,peakAt,halfDecaySteps,releaseArea,at20})=>
+      ({seed,detected,censored,peak,peakAt,halfDecaySteps,releaseArea,at20}))};
+}
+function runMemorySuite(options={}) {
+  const {params=DEFAULT_PARAMS,seedStart=MEMORY_PROTOCOL.seedStart,trials=MEMORY_PROTOCOL.trials}=options;
+  if(!Number.isInteger(trials)||trials<2||trials>32||!Number.isInteger(seedStart))
+    throw new Error('Invalid seed or trial count');
+  return {protocol:{
+      id:'AquaMemory-PULSE-RELEASE-0.2',...MEMORY_PROTOCOL,seedStart,trials,
+      pulseInput:'0.68 + 0.38 * seededRandom(seed), D0 only',
+      releaseInput:0,
+      sampleDuration:'one advance step = 3 times dt=0.13 (toy time)',
+      observable:'RMS of D1..D6, source D0 excluded',
+      peak:'max postrelease downstream RMS',
+      releaseArea:'sum of downstream RMS over release samples (arbitrary units x steps)',
+      halfDecay:'samples after postrelease peak to reach <=50%, null if undetected/censored',
+      qualifyingDetection:'postrelease peak >= 0.02 arbitrary units',
+      statistics:'mean and sample SD across matched-seed inputs, not confidence intervals',
+    },
+    params:{...DEFAULT_PARAMS,...params},
+    results:Object.keys(TOPOLOGIES).map(topology=>summarizeMemoryTrials(topology,
+      Array.from({length:trials},(_,i)=>pulseReleaseTrial(topology,{seed:seedStart+i,params}))))};
 }
 
 const el = id => document.getElementById(id);
